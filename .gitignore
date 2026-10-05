@@ -1,0 +1,20 @@
+# 运行时数据（首次启动会自动生成，含你的真实任务，不要提交）
+data/db.json
+data/*.tmp
+data/*.bak
+
+# 系统 / 编辑器
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/
+*.log
+npm-debug.log*
+
+# 覆盖率 / 缓存
+coverage/
+.nyc_output/
+.cache/
+node_modules/
