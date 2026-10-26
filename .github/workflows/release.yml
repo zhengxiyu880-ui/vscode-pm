@@ -1,0 +1,46 @@
+name: Release
+
+# 推 tag（v1.1.0 这种）时自动打包 dmg / zip，并挂到对应的 Release 上。
+# 这样就不需要在自己电脑上跑 hdiutil，也不用手动上传附件。
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: '要打包的 tag（默认用当前 ref）'
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    name: 打包并上传
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+
+      - name: 跑测试
+        run: npm test
+
+      - name: 打包（dmg + 两个 zip）
+        run: ./package.sh
+
+      - name: 产物清单
+        run: ls -lh dist/
+
+      - name: 上传到 Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          gh release view "$TAG" >/dev/null 2>&1 || \
+            gh release create "$TAG" --generate-notes --title "$TAG"
+          gh release upload "$TAG" dist/*.dmg dist/*.zip --clobber

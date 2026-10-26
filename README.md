@@ -50,6 +50,20 @@ npm start            # 等价于 node server.js
 PORT=8080 npm start
 ```
 
+## 安装（不想碰命令行）
+
+Release 页面提供打包好的版本：
+
+| 平台 | 下载 | 用法 |
+| --- | --- | --- |
+| macOS 11+ | `vscode-pm-<版本>.dmg` 或 `-macos.zip` | 拖进「应用程序」→ 双击 → 浏览器自动打开界面 |
+| Windows 10+ | `-windows.zip` | 解压 → 双击 `start.cmd` |
+
+- 两个包都**需要本机装 Node.js 18+**（服务端是 Node 跑的），但**不需要 `npm install`**
+- 数据落在 `~/Library/Application Support/vscode-pm/db.json`（macOS）或 `%APPDATA%\vscode-pm\db.json`（Windows）——备份就是复制这个文件
+- 首次打开若提示「无法验证开发者」：右键点 app → 打开 → 再点「打开」
+- 想彻底退出：右键 Dock 图标 → 退出；Windows 关掉那个命令行窗口
+
 ## 界面预览
 
 **看板** —— 四列拖拽流转，卡片显示所属项目、截止日期与优先级
@@ -110,8 +124,14 @@ vscode-pm/
 │   ├── run.mjs        # 测试编排：每个用例独立服务 + 临时数据文件
 │   ├── api.test.mjs   # 后端接口测试（31 项）
 │   └── ui.test.mjs    # 前端渲染测试（24 项，用最小 DOM 桩驱动真实请求）
+├── packaging/         # 打包素材
+│   ├── macos/         # launcher.sh（.app 启动器）/ AppIcon.icns / make-icon.py
+│   ├── windows/       # start.cmd（Windows 启动脚本）
+│   └── 使用说明.txt    # 放进安装包里的说明
+├── package.sh         # 打包：dmg + macOS zip + Windows zip
 ├── .github/workflows/
-│   └── ci.yml         # CI：Node 18/20/22/24 四版本跑语法检查 + 全部测试
+│   ├── ci.yml         # CI：Node 18/20/22/24 四版本跑语法检查 + 全部测试
+│   └── release.yml    # 推 tag 时自动打包并上传到 Release
 ├── CONTRIBUTING.md    # 贡献约定（核心：不许加依赖）
 ├── CHANGELOG.md
 └── LICENSE            # MIT
@@ -191,6 +211,22 @@ npm run check        # 仅语法检查
 
 ---
 
+## 自己打包
+
+```bash
+./package.sh            # → dist/ 下生成 .dmg、-macos.zip、-windows.zip
+./package.sh --no-dmg   # 只出 zip（非 macOS 环境 / 不需要 dmg 时）
+```
+
+打包方式是**启动器**，不是 Electron：`.app` 里放一个 shell 启动脚本 + 服务端代码，
+双击时找本机 node → 起本地服务 → 等端口就绪 → 打开浏览器 → 退出 app 时把服务杀掉。
+好处是包只有几百 KB、不破坏「零依赖」的定位；代价是对方电脑上得有 Node。
+
+想要「对方什么都不装、双击就能跑」的独立 `.exe` / `.dmg`，得用 Electron 或 Tauri 把 Node 运行时打进去，
+体积会从几百 KB 变成 100 MB 量级 —— 现阶段刻意没做（见路线图）。
+
+推 tag 时 GitHub Actions 会自动打包并挂到 Release（`.github/workflows/release.yml`），不用在本地跑 hdiutil。
+
 ## 路线图
 
 按优先级排，欢迎认领（提 PR 前先开 Issue 对齐一下）：
@@ -200,6 +236,7 @@ npm run check        # 仅语法检查
 - [ ] 键盘优先的快速录入（`⌘K` 命令面板，不用鼠标就能建任务）
 - [ ] 日历视图（按 `due` 铺到月视图，看「这周要交什么」）
 - [ ] Docker 一键部署到 NAS / 小主机（`HOST=0.0.0.0` + 挂载 data 目录）
+- [ ] 可选 Electron / Tauri 打包，做成不依赖本机 Node 的独立安装包
 - [ ] 可选的多用户（加一层密码 + 每人一个 data 文件，仍不引入数据库）
 
 ## 设计说明

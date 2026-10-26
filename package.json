@@ -1,6 +1,6 @@
 {
   "name": "vscode-pm",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "description": "简洁的 VSCode 风格项目管理系统：项目 / 任务 / 看板",
   "main": "server.js",

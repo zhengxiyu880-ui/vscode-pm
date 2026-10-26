@@ -18,3 +18,7 @@ coverage/
 .nyc_output/
 .cache/
 node_modules/
+
+# 打包产物
+dist/
+.dmgtest/

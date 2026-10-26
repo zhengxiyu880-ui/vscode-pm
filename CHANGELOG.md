@@ -2,6 +2,21 @@
 
 本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/)，格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [1.1.0] - 2026-10-26
+
+### 新增
+
+- **macOS 安装包**：`./package.sh` 生成 `项目管理.app`，内含启动器——双击即起本地服务并自动打开浏览器，
+  退出 app 时自动停掉服务；数据存到 `~/Library/Application Support/vscode-pm/`
+- **Windows 启动包**：解压后双击 `start.cmd`，同样是一键起服务并打开浏览器，数据存到 `%APPDATA%\vscode-pm\`
+- **dmg / zip 分发**：一条命令产出 `.dmg`、`.zip`，或推 tag 后由 GitHub Actions 自动打包并挂到 Release
+- 应用图标（`packaging/macos/make-icon.py` 用 Pillow 生成，可改配色重新生成）
+
+### 说明
+
+采用「启动器」式打包而不是 Electron：安装包只有几百 KB，也不需要把 Node 一起塞进去，
+但对方电脑上得有 Node.js 18+。真要「什么依赖都没有、双击就能跑」的 `.exe`，得换 Electron/Tauri 打包（100 MB+）。
+
 ## [1.0.0] - 2026-10-26
 
 首个可用版本：一个可以真正用来管事的本地项目管理工具。

@@ -1,0 +1,46 @@
+项目管理系统 · 使用说明
+========================
+
+一、这是什么
+    一个本地跑的项目管理工具：项目 / 任务 / 看板。
+    数据只存在你自己电脑上，不联网、不注册、不上传。
+
+二、怎么用
+
+    macOS：
+        1. 双击「项目管理系统.app」
+        2. 等一两秒，浏览器会自动打开 http://127.0.0.1:5177
+        3. 关掉浏览器不会停止服务；想彻底退出，右键 Dock 上的图标 → 退出
+
+        如果提示「无法打开，因为无法验证开发者」：
+            右键点 app → 打开 → 再点「打开」
+        （命令行方式：xattr -dr com.apple.quarantine "/Applications/项目管理系统.app"）
+
+    Windows：
+        1. 双击「start.cmd」
+        2. 浏览器会自动打开 http://127.0.0.1:5177
+        3. 关闭那个黑色命令行窗口 = 停止服务
+
+三、运行环境
+    需要 Node.js 18 或更新版本，没装就去 https://nodejs.org 下载 LTS 版。
+    macOS 的安装包里已经带好了服务端代码，不需要再 npm install。
+
+四、我的数据存在哪
+    macOS：~/Library/Application Support/vscode-pm/db.json
+    Windows：%APPDATA%\vscode-pm\db.json
+
+    备份 = 复制这个文件；换机 = 把它带走。
+    也可以在界面里点「导出数据」存成 JSON。
+
+五、常见问题
+    · 浏览器打不开 / 一直转圈：看日志
+        macOS：~/Library/Logs/vscode-pm.log
+        Windows：命令行窗口里的报错
+    · 端口被占用：说明已经开着一个了，先把旧的关掉；
+      或设置环境变量 PM_PORT=5200 换端口
+    · 想要局域网访问（比如手机）：HOST=0.0.0.0 启动，然后访问电脑 IP；
+      注意这样同一网络里别人也能打开，且工具本身没有登录密码
+
+六、卸载
+    直接删掉 app / 文件夹即可。
+    macOS 如果想把数据也删干净：rm -rf ~/Library/Application\ Support/vscode-pm
